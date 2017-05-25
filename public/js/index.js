@@ -3,12 +3,6 @@ let socket = io(); // stores the socket in a var
 // 'connect' is a built in client side event
 socket.on('connect', function() {
     console.log('Connected to server');
-
-    // sending event to server, eg. html forms
-    socket.emit('createMessage', {
-        from: 'Arpad',
-        text: 'Hey, this is me'
-    });
 });
 
 socket.on('disconnect', function() {

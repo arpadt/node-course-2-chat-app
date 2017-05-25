@@ -17,16 +17,15 @@ app.use(express.static(publicPath));
 io.on('connection', (socket) => {
     console.log('New user connected');      // do something with the connection
 
-    // emit custom events to client
-    socket.emit('newMessage', {
-        from: 'Arpad',
-        text: 'Hey, what is going on',
-        createAt: 123
-    });
-
     // receiving email from client
     socket.on('createMessage', (message) => {
         console.log('createMessage', message);
+        // emit event to everyone
+        io.emit('newMessage', {
+            from: message.from,
+            text: message.text,
+            createAt: new Date().getTime()
+        })
     });
 
     socket.on('disconnect', () => {
