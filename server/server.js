@@ -3,8 +3,9 @@ const http = require('http');
 const path = require('path');
 const socketIO = require('socket.io');
 
-const publicPath = path.join(__dirname, '../public');
+const {generateMessage} = require('./utils/message');
 
+const publicPath = path.join(__dirname, '../public');
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server); // access to socket.io
@@ -18,27 +19,15 @@ io.on('connection', (socket) => {
     console.log('New user connected');      // do something with the connection
 
     // fire a message to the new user
-    socket.emit('newMessage', {
-        from: 'Admin',
-        text: 'Welcome to the chat app',
-        createdAt: new Date().getTime()
-    });
+    socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app'));
     // broadcast a message to everyone else
-    socket.broadcast.emit('newMessage', {
-        from: 'Admin',
-        text: 'New user joined',
-        createdAt: new Date().getTime()
-    });
+    socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'));
 
     // receiving email from client
     socket.on('createMessage', (message) => {
         console.log('createMessage', message);
         // emit event to everyone  - socket.emit() emits an event to a single connection
-        io.emit('newMessage', {
-            from: message.from,
-            text: message.text,
-            createdAt: new Date().getTime()
-        });
+        io.emit('newMessage', generateMessage(message.from, message.text));
         // broadcasting events - everyone gets the same message BUT ONE PERSON, sender does not receive its own message
         // socket.broadcast.emit('newMessage', {
         //     from: message.from,
