@@ -17,15 +17,34 @@ app.use(express.static(publicPath));
 io.on('connection', (socket) => {
     console.log('New user connected');      // do something with the connection
 
+    // fire a message to the new user
+    socket.emit('newMessage', {
+        from: 'Admin',
+        text: 'Welcome to the chat app',
+        createdAt: new Date().getTime()
+    });
+    // broadcast a message to everyone else
+    socket.broadcast.emit('newMessage', {
+        from: 'Admin',
+        text: 'New user joined',
+        createdAt: new Date().getTime()
+    });
+
     // receiving email from client
     socket.on('createMessage', (message) => {
         console.log('createMessage', message);
-        // emit event to everyone
+        // emit event to everyone  - socket.emit() emits an event to a single connection
         io.emit('newMessage', {
             from: message.from,
             text: message.text,
-            createAt: new Date().getTime()
-        })
+            createdAt: new Date().getTime()
+        });
+        // broadcasting events - everyone gets the same message BUT ONE PERSON, sender does not receive its own message
+        // socket.broadcast.emit('newMessage', {
+        //     from: message.from,
+        //     text: message.text,
+        //     createdAt: new Date().getTime()
+        // });
     });
 
     socket.on('disconnect', () => {
