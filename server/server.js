@@ -24,10 +24,11 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'));
 
     // receiving email from client
-    socket.on('createMessage', (message) => {
+    socket.on('createMessage', (message, callback) => {
         console.log('createMessage', message);
         // emit event to everyone  - socket.emit() emits an event to a single connection
         io.emit('newMessage', generateMessage(message.from, message.text));
+        callback('This is from the server');
         // broadcasting events - everyone gets the same message BUT ONE PERSON, sender does not receive its own message
         // socket.broadcast.emit('newMessage', {
         //     from: message.from,
