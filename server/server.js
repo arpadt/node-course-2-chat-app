@@ -4,7 +4,7 @@ const path = require('path');
 const socketIO = require('socket.io');
 
 const {generateMessage, generateLocationMessage} = require('./utils/message');
-const {isRealString} = require('./utils/validation');
+const {isRealString, toLowerCase} = require('./utils/validation');
 const {Users} = require('./utils/users');
 
 const publicPath = path.join(__dirname, '../public');
@@ -29,24 +29,26 @@ io.on('connection', (socket) => {
 
     // join room
     socket.on('join', (params, callback) => {
-        if (!isRealString(params.name) || !isRealString(params.room)) {
+        let room = toLowerCase(params.room);
+
+        if (!isRealString(params.name) || !isRealString(room)) {
             // no code below fires if format is not validated
             return callback('Name and room name are required');
         }
 
-        socket.join(params.room); // people in the same room can chat
+        socket.join(room); // people in the same room can chat
         // remove user from any previous rooms
         users.removeUser(socket.id);
         // add user to the new room
-        users.addUser(socket.id, params.name, params.room);
+        users.addUser(socket.id, params.name, room);
 
         // emit an event to everyone in the room
-        io.to(params.room).emit('updateUserList', users.getUserList(params.room));
+        io.to(room).emit('updateUserList', users.getUserList(room));
 
         // fire a message to the new user
         socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app'));
         // broadcast a message to everyone else
-        socket.broadcast.to(params.room).emit('newMessage', generateMessage('Admin', `${params.name} has joined.`));
+        socket.broadcast.to(room).emit('newMessage', generateMessage('Admin', `${params.name} has joined.`));
         callback();
     });
 
