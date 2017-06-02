@@ -36,7 +36,12 @@ io.on('connection', (socket) => {
             return callback('Name and room name are required');
         }
 
+        if (users.isUserNameUnique(params.name) === 1) {
+            return callback('This username is already taken');
+        }
+
         socket.join(room); // people in the same room can chat
+
         // remove user from any previous rooms
         users.removeUser(socket.id);
         // add user to the new room

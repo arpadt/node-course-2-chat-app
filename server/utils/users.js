@@ -46,23 +46,13 @@ class Users {
 
         return namesArray;
     }
+
+    isUserNameUnique(userName) {
+        // return length of an array
+        let users = this.users.filter( (user) => user.name === userName);
+
+        return users.length;
+    }
 }
-
-// set of data and methods
-// class Person {
-//     constructor(name, age) {
-//         this.name = name;
-//         this.age = age;
-//     }
-
-//     getUserDescription() {
-//         return `${this.name} is ${this.age} year(s) old.`;
-//     }
-// }
-
-// // instance
-// let me = new Person('Arpad', 41);
-// let description = me.getUserDescription();
-// console.log(description);
 
 module.exports = {Users};

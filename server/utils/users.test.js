@@ -75,4 +75,18 @@ describe('Users', () => {
 
         expect(userList).toEqual(['Jen']);
     });
+
+    it('should reject already existing username', () => {
+        let userName = 'Mike';
+        let uniqueUserArray = users.isUserNameUnique(userName);
+
+        expect(uniqueUserArray).toBe(1);
+    });
+
+    it('should accept new username', () => {
+        let userName = 'Mel';
+        let uniqueUserArray = users.isUserNameUnique(userName);
+
+        expect(uniqueUserArray).toBe(0);
+    });
 });
