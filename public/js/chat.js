@@ -35,6 +35,7 @@ socket.on('disconnect', function() {
     console.log('Disconnected from server');
 });
 
+
 socket.on('updateUserList', function(users) {
     let ol = jQuery('<ol></ol>');
 

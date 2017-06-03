@@ -1,10 +1,3 @@
-// store user related data
-[{
-    id: '',
-    name: 'Arpad',
-    room: 'The Office Fans'
-}]
-
 // addUser(id, name, room)
 // removeUser(id) when someone leaves the room
 // getUser(id) when sending someone a message

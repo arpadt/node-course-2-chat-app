@@ -4,14 +4,16 @@ const path = require('path');
 const socketIO = require('socket.io');
 
 const {generateMessage, generateLocationMessage} = require('./utils/message');
-const {isRealString, toLowerCase} = require('./utils/validation');
+const {isRealString, makeItLowerCase} = require('./utils/validation');
 const {Users} = require('./utils/users');
+const {Rooms} = require('./utils/rooms');
 
 const publicPath = path.join(__dirname, '../public');
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server); // access to socket.io
 let users = new Users();
+let rooms = new Rooms();
 
 const port = process.env.PORT || 3000;
 
@@ -21,6 +23,8 @@ app.use(express.static(publicPath));
 io.on('connection', (socket) => {
     console.log('New user connected');      // do something with the connection
 
+    socket.emit('updateRoomList', rooms.getRoomList());
+
     // io.emit: emit event to everyone
     // socket.broadcast.emit: emit event to everyone but the current user
     // socket.emit: emit event specifically to one user
@@ -29,7 +33,7 @@ io.on('connection', (socket) => {
 
     // join room
     socket.on('join', (params, callback) => {
-        let room = toLowerCase(params.room);
+        let room = makeItLowerCase(params.room);
 
         if (!isRealString(params.name) || !isRealString(room)) {
             // no code below fires if format is not validated
@@ -39,6 +43,8 @@ io.on('connection', (socket) => {
         if (users.isUserNameUnique(params.name) === 1) {
             return callback('This username is already taken');
         }
+
+        rooms.addRoom(room);
 
         socket.join(room); // people in the same room can chat
 
@@ -78,12 +84,16 @@ io.on('connection', (socket) => {
     });
 
     socket.on('disconnect', () => {
+        console.log('User disconnected');
         // remove user and update the list
         let user = users.removeUser(socket.id);
 
         if (user) {
             io.to(user.room).emit('updateUserList', users.getUserList(user.room));
             io.to(user.room).emit('newMessage', generateMessage('Admin', `${user.name} has left.`));
+
+            // check if there are still users in the room
+            rooms.removeRoom(user.room, users.getUserList(user.room).length);
         }
     });
 }); // listen to a connection

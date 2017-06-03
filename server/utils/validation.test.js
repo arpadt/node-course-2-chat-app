@@ -1,6 +1,6 @@
 const expect = require('expect');
 
-const {isRealString, toLowerCase} = require('./validation');
+const {isRealString, makeItLowerCase} = require('./validation');
 
 describe('isRealString', () => {
     it('should reject non-string values', () => {
@@ -19,9 +19,9 @@ describe('isRealString', () => {
     });
 });
 
-describe('toLowerCase', () => {
+describe('makeItLowerCase', () => {
     it('should make string to lower case', () => {
-        let res = toLowerCase('Hi I Am A User');
+        let res = makeItLowerCase('Hi I Am A User');
         expect(res).toBe('hi i am a user');
     });
 });
