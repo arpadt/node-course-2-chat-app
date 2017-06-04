@@ -172,6 +172,11 @@ button:disabled {
   color: #999;
 }
 
+.select-hide {
+  display: none;
+  visibility: hidden;
+}
+
 @media (max-width: 600px) {
   * {
     font-size: 1rem;

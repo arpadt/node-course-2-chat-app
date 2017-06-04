@@ -1,5 +1,11 @@
 let socket = io(); // stores the socket in a var
 
+function forEach(array, callback, scope) {
+	for (let i = 0; i < array.length; i++) {
+		callback.call(scope, i, array[i]);
+    }
+}
+
 function scrollToBottom() {
     // Selectors
     const messages = jQuery('#messages');
@@ -39,7 +45,10 @@ socket.on('disconnect', function() {
 socket.on('updateUserList', function(users) {
     let ol = jQuery('<ol></ol>');
 
-    users.forEach( (user) => {
+    // users.forEach( (user) => {
+    //     ol.append(jQuery('<li></li>').text(user));
+    // });
+    forEach(users, function(i, user) {
         ol.append(jQuery('<li></li>').text(user));
     });
 
